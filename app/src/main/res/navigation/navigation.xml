@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/navigation"
+    app:startDestination="@id/taskFragment">
+
+    <fragment
+        android:id="@+id/taskFragment"
+        android:name="com.mvvm.todo.ui.fragment.TaskFragment"
+        android:label="TaskFragment" >
+        <action
+            android:id="@+id/action_taskFragment_to_addCategoryFragment"
+            app:destination="@id/addCategoryFragment" />
+        <action
+            android:id="@+id/action_taskFragment_to_taksByCategoryFragment"
+            app:destination="@id/taksByCategoryFragment" />
+        <action
+            android:id="@+id/action_taskFragment_to_addCategoryFragment2"
+            app:destination="@id/addCategoryFragment" />
+        <action
+            android:id="@+id/action_taskFragment_to_taksByCategoryFragment2"
+            app:destination="@id/taksByCategoryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addFragment"
+        android:name="com.mvvm.todo.ui.fragment.add.AddFragment"
+        android:label="AddFragment" >
+        <action
+            android:id="@+id/action_addFragment_to_taksByCategoryFragment"
+            app:destination="@id/taksByCategoryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addCategoryFragment"
+        android:name="com.mvvm.todo.ui.fragment.add.AddCategoryFragment"
+        android:label="AddCategoryFragment" >
+        <action
+            android:id="@+id/action_addCategoryFragment_to_taskFragment"
+            app:destination="@id/taskFragment" />
+        <action
+            android:id="@+id/action_addCategoryFragment_to_taskFragment2"
+            app:destination="@id/taskFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/taksByCategoryFragment"
+        android:name="com.mvvm.todo.ui.fragment.TaksByCategoryFragment"
+        android:label="TaksByCategoryFragment" >
+        <action
+            android:id="@+id/action_taksByCategoryFragment_to_addFragment"
+            app:destination="@id/addFragment" />
+        <action
+            android:id="@+id/action_taksByCategoryFragment_to_taskFragment"
+            app:destination="@id/taskFragment" />
+    </fragment>
+</navigation>
