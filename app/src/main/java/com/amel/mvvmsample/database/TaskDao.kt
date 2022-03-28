@@ -1,30 +1,36 @@
-package com.mvvm.todo.database
+package com.amel.mvvmsample.database
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.mvvm.todo.model.TaskEntry
+import com.amel.mvvmsample.model.TaskEntry
 
 @Dao
 interface TaskDao {
 
     @Insert
-    suspend fun insert(taskEntry: TaskEntry)
+    suspend fun insertTask(taskEntry: TaskEntry) : Long
 
     @Update
-    suspend fun update(taskEntry: TaskEntry)
+    suspend fun updateTask(taskEntry: TaskEntry) : Int
 
     @Delete
-    fun delete(taskEntry: TaskEntry)
+    suspend fun deleteTask(taskEntry: TaskEntry) : Int
 
-    @Query("SELECT * FROM TaskEntry ORDER BY time DESC")
+    @Query("DELETE FROM taks")
+    suspend fun deleteAllTask() : Int
+
+    @Query("SELECT * FROM taks ORDER BY taks_time ASC")
     fun getAllTask(): LiveData<List<TaskEntry>>
 
-    @Query("SELECT * FROM TaskEntry WHERE category = :id_cat ORDER BY id DESC")
+    @Query("SELECT * FROM taks WHERE category_id = :id_cat ORDER BY taks_id DESC")
     fun getAllTaskByCat(id_cat: Int): LiveData<List<TaskEntry>>
 
-    @Query("SELECT * from TaskEntry where DATE(time) <= date('now', '+1 day') AND DATE(time) >= date('now', '-1 day')")
+    @Query("SELECT * from taks where DATE(taks_time) <= date('now', '+1 day') AND DATE(taks_time) >= date('now', '-1 day')")
     fun getTaskToday(): LiveData<List<TaskEntry>>
 
-    @Query("SELECT * FROM TaskEntry WHERE category = :id ORDER BY id DESC")
-    fun getCount(id: Int): LiveData<List<TaskEntry>>
+    @Query("SELECT COUNT(taks_id) FROM taks WHERE category_id = :id ORDER BY taks_id DESC")
+    fun getCount(id: Int): Int
+
+    @Query("DELETE FROM taks WHERE category_id = :id")
+    fun deleteByCatId(id: Int)
 }

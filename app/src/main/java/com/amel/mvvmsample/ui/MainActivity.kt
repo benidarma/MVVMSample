@@ -1,9 +1,11 @@
-package com.mvvm.todo.ui
+package com.amel.mvvmsample.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.amel.mvvmsample.R
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

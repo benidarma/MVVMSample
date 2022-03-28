@@ -1,26 +1,33 @@
-package com.mvvm.todo.ui.fragment
+package com.amel.mvvmsample.ui.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.amel.mvvmsample.R
+import com.amel.mvvmsample.adapter.TaskRecyclerViewAdapter
 import com.amel.mvvmsample.databinding.FragmentTaksByCategoryBinding
-import com.mvvm.todo.adapter.TaskAdapter
-import com.mvvm.todo.model.TaskEntry
-import com.mvvm.todo.util.Constant.myGlobalVarIdCat
-import com.mvvm.todo.util.Constant.myGlobalVarTitleCat
-import com.mvvm.todo.viewmodel.TaskViewModel
+import com.amel.mvvmsample.model.TaskEntry
+import com.amel.mvvmsample.ui.fragment.add.Cons
+import com.amel.mvvmsample.util.Constant.myGlobalVarIdCat
+import com.amel.mvvmsample.util.Constant.myGlobalVarIdTaks
+import com.amel.mvvmsample.util.Constant.myGlobalVarTimeTaks
+import com.amel.mvvmsample.util.Constant.myGlobalVarTitleCat
+import com.amel.mvvmsample.util.Constant.myGlobalVarTitleTaks
+import com.amel.mvvmsample.viewmodel.TaskViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
-class TaksByCategoryFragment : Fragment(R.layout.fragment_taks_by_category), TaskAdapter.OnItemClickListener {
+@AndroidEntryPoint
+class TaksByCategoryFragment : Fragment(R.layout.fragment_taks_by_category) {
 
     private val viewModel: TaskViewModel by viewModels()
-    private lateinit var adapter: TaskAdapter
+    private lateinit var taksAdapter: TaskRecyclerViewAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,21 +37,30 @@ class TaksByCategoryFragment : Fragment(R.layout.fragment_taks_by_category), Tas
         val binding = FragmentTaksByCategoryBinding.inflate(inflater)
 
         binding.lifecycleOwner = this
-        binding.viewModel = viewModel
 
         val id_cat = myGlobalVarIdCat;
         val title_cat = myGlobalVarTitleCat
 
-        adapter = TaskAdapter(this)
+        taksAdapter = TaskRecyclerViewAdapter({ selectedItem: TaskEntry ->
+            taksTitleClicked(selectedItem)
+        }, { selectedItem: TaskEntry ->
+            taksRadioClicked(selectedItem)
+        })
         viewModel.getAllTaksByCat(id_cat).observe(viewLifecycleOwner) {
-            adapter.submitList(it)
+            taksAdapter.setList(it)
+        }
+        viewModel.message.observe(viewLifecycleOwner) {
+            it.getContentIfNotHandled()?.let { its ->
+                Toast.makeText(activity, its, Toast.LENGTH_LONG).show()
+            }
         }
 
         binding.apply {
 
-            binding.recyclerView.adapter = adapter
+            binding.recyclerView.adapter = taksAdapter
 
             floatingActionButton.setOnClickListener {
+                Cons.INSERT = true
                 findNavController().navigate(R.id.action_taksByCategoryFragment_to_addFragment)
             }
         }
@@ -59,29 +75,53 @@ class TaksByCategoryFragment : Fragment(R.layout.fragment_taks_by_category), Tas
         return binding.root
     }
 
-    override fun onItemClick(taskEntry: TaskEntry) {
-        viewModel.onTaskSelected(taskEntry)
-
-        val builder = context?.let { AlertDialog.Builder(it) }
-        builder?.setTitle(taskEntry.title)
-        builder?.setMessage("Silakan Pilih Aksi")
-
-        builder?.setPositiveButton("Hapus") { dialog, which ->
-            viewModel.delete(taskEntry)
-            dialog.cancel()
+    private fun taksTitleClicked(taskEntry: TaskEntry) {
+        activity?.let {
+            val builder = AlertDialog.Builder(it)
+            builder.setTitle(taskEntry.title)
+            builder.setMessage("Select action")
+            builder.setPositiveButton("Update") { dialog, _ ->
+                dialog.dismiss()
+                myGlobalVarIdTaks = taskEntry.id
+                myGlobalVarTitleTaks = taskEntry.title
+                myGlobalVarTimeTaks = taskEntry.time
+                Cons.INSERT = false
+                findNavController().navigate(R.id.action_taksByCategoryFragment_to_addFragment)
+            }
+            builder.setNegativeButton("Delete") { dialog, _ ->
+                dialog.dismiss()
+                viewModel.callDelete(taskEntry)
+            }
+            builder.setNeutralButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            val dialog = builder.create()
+            dialog.show()
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).isAllCaps = false
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).isAllCaps = false
+            dialog.getButton(AlertDialog.BUTTON_NEUTRAL).isAllCaps = false
         }
-
-        /*builder?.setNegativeButton("Edit") { dialog, which ->
-            findNavController().navigate(R.id.action_taksByCategoryFragment_to_addFragment)
-        }*/
-
-        builder?.setNeutralButton("Cancel") { dialog, which ->
-            dialog.cancel()
-        }
-        builder?.show()
     }
 
-    override fun onCheckBoxClick(taskEntry: TaskEntry, isChecked: Boolean) {
-        viewModel.onTaskCheckedChanged(taskEntry, isChecked)
+    private fun taksRadioClicked(taskEntry: TaskEntry) {
+        activity?.let {
+            val builder = AlertDialog.Builder(it)
+            builder.setTitle(taskEntry.title)
+            builder.setMessage("Apakah taks sudah selesai?")
+            builder.setCancelable(false)
+            builder.setPositiveButton("Iya") { dialog, _ ->
+                viewModel.onTaskCheckedChanged(taskEntry, true)
+                dialog.dismiss()
+            }
+            builder.setNegativeButton("Belum") { dialog, _ ->
+                viewModel.onTaskCheckedChanged(taskEntry, false)
+                dialog.dismiss()
+            }
+            val dialog = builder.create()
+            dialog.show()
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).isAllCaps = false
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).isAllCaps = false
+            dialog.getButton(AlertDialog.BUTTON_NEUTRAL).isAllCaps = false
+        }
     }
 }

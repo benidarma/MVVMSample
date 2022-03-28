@@ -4,58 +4,72 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <variable
-            name="categoryTask"
-            type="com.mvvm.todo.model.CategoryTask" />
+
     </data>
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/main_card"
-        android:layout_width="180dp"
-        android:layout_height="120dp"
-        android:layout_margin="5dp"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="4dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/total_task"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginRight="5dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textSize="13sp"
-            tools:text="@{categoryTask.name}" />
+            android:orientation="vertical"
+            tools:ignore="MissingConstraints">
 
-        <TextView
-            android:id="@+id/tv_nama_kat"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="40dp"
-            android:layout_marginRight="5dp"
-            android:textSize="22sp"
-            tools:text="@{categoryTask.name}" />
+            <androidx.cardview.widget.CardView
+                android:id="@+id/main_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp">
 
-        <ProgressBar
-            android:id="@+id/pb_kategori"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="85dp"
-            android:layout_marginRight="5dp"
-            android:progress="60"
-            android:progressBackgroundTint="@color/purple_500"
-            android:progressTint="@color/black" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-    </androidx.cardview.widget.CardView>
+                    <TextView
+                        android:id="@+id/total_task"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginEnd="30dp"
+                        android:text="@string/app_name"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                        android:textSize="22sp" />
+
+                    <TextView
+                        android:id="@+id/tv_name_cat"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="-10dp"
+                        android:layout_marginEnd="30dp"
+                        android:text="@string/app_name"
+                        android:textSize="40sp"
+                        android:textStyle="bold" />
+
+                    <ProgressBar
+                        android:id="@+id/progressbar_cat"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="20dp"
+                        android:layout_marginEnd="10dp"
+                        android:progress="90"
+                        android:scaleY="3" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

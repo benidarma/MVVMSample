@@ -1,36 +1,107 @@
-package com.mvvm.todo.viewmodel
+package com.amel.mvvmsample.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.viewModelScope
-import com.mvvm.todo.database.MyTaskDatabase
-import com.mvvm.todo.model.CategoryTask
-import com.mvvm.todo.repo.CategoryRepo
-import com.mvvm.todo.util.Constant.myGlobalVarIdCat
-import com.mvvm.todo.util.Constant.myGlobalVarTitleCat
+import androidx.lifecycle.*
+import com.amel.mvvmsample.model.CategoryData
+import com.amel.mvvmsample.model.CategoryTask
+import com.amel.mvvmsample.repo.CategoryRepo
+import com.amel.mvvmsample.repo.TaskRepo
+import com.amel.mvvmsample.ui.fragment.add.Cons.INSERT
+import com.amel.mvvmsample.util.Constant.myGlobalVarIdCat
+import com.amel.mvvmsample.util.Event
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class CategoryViewModel(application: Application) : AndroidViewModel(application) {
-    private val categoryDao = MyTaskDatabase.getDatabase(application).categoryDao()
-    private val repo: CategoryRepo = CategoryRepo(categoryDao)
+@HiltViewModel
+class CategoryViewModel @Inject constructor(
+    private val categoryRepo: CategoryRepo,
+    private val taksRepo: TaskRepo,
+    private val savedStateHandle: SavedStateHandle
+) : ViewModel() {
 
-    val getAllCategory: LiveData<List<CategoryTask>> = repo.getAllCategory()
+    private val cat = savedStateHandle.get<CategoryTask>("cat")
+    var catName = savedStateHandle.get<String>("catName") ?: cat?.name ?: ""
+        set(value) {
+            field = value
+            savedStateHandle.set("catName", value)
+        }
 
-    fun insertData(categoryTask: CategoryTask) {
-        viewModelScope.launch(Dispatchers.IO) {
-            repo.insertData(categoryTask)
+    private val statusMessage = MutableLiveData<Event<String>>()
+    val message: LiveData<Event<String>>
+        get() = statusMessage
+
+    private val categoryData = MutableLiveData<MutableList<CategoryData>>()
+    val category: LiveData<MutableList<CategoryData>>
+        get() = categoryData
+
+    init {
+        categoryData.value = mutableListOf()
+    }
+
+    private fun insertCategory(categoryTask: CategoryTask) = viewModelScope.launch {
+        val newRowId = categoryRepo.insert(categoryTask)
+        if (newRowId > -1) {
+            statusMessage.value = Event("Category Inserted Successfully $newRowId")
+        } else {
+            statusMessage.value = Event("Error Occurred")
         }
     }
 
-    fun onCategoryVSelected(categoryTask: CategoryTask){
-        myGlobalVarIdCat = categoryTask.id
-        myGlobalVarTitleCat = categoryTask.name
+    private fun updateCategory(categoryTask: CategoryTask) = viewModelScope.launch {
+        val noOfRows = categoryRepo.update(categoryTask)
+        if (noOfRows > 0) {
+            statusMessage.value = Event("$noOfRows Row Updated Successfully")
+        } else {
+            statusMessage.value = Event("Error Occurred")
+        }
     }
 
-    fun onLongCategoryVSelected(categoryTask: CategoryTask){
-        myGlobalVarIdCat = categoryTask.id
-        myGlobalVarTitleCat = categoryTask.name
+    fun getAllCategories(): LiveData<List<CategoryTask>> {
+        return categoryRepo.categories
+    }
+
+    fun callDelete(category: CategoryData) {
+        deleteCategory(category)
+    }
+    private fun deleteCategory(category: CategoryData) = viewModelScope.launch {
+        val noOfRowsDeleted = categoryRepo.delete(CategoryTask(category.category_id, category.category_name))
+        if (noOfRowsDeleted > 0) {
+            statusMessage.value = Event("$noOfRowsDeleted Row Deleted Successfully")
+        } else {
+            statusMessage.value = Event("Error Occurred")
+        }
+    }
+
+    fun loadCategory(categoryTask: List<CategoryTask>) {
+        categoryData.value?.clear()
+        var i = 1
+        categoryTask.forEach {
+            viewModelScope.launch(Dispatchers.IO) {
+                val use = taksRepo.getTotalUseCategory(it.id)
+
+                categoryData.value?.add(CategoryData(it.id, it.name, use))
+                if (categoryTask.size == i) {
+                    categoryData.postValue(categoryData.value)
+                    i = 1
+                }
+                i++
+            }
+        }
+    }
+
+    fun onSaveClick(): Boolean {
+        if (catName.isBlank()) {
+            statusMessage.value = Event("Fields cannot be empty")
+            return false
+        }
+        if (!INSERT) {
+            val updateData = CategoryTask(id = myGlobalVarIdCat, name = catName)
+            updateCategory(updateData)
+        } else {
+            val newData = CategoryTask(id = 0, name = catName)
+            insertCategory(newData)
+        }
+        return true
     }
 }

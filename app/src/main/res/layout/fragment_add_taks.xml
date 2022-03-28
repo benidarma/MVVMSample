@@ -7,10 +7,10 @@
 
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.fragment.add.AddCategoryFragment">
+        tools:context=".ui.fragment.add.AddTaksFragment">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -20,23 +20,30 @@
             android:padding="30dp">
 
             <EditText
-                android:id="@+id/et_name_cat"
+                android:id="@+id/et_enter_task"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:hint="Name Category" />
+                android:hint="Enter Task" />
 
             <Button
-                android:id="@+id/btn_save_cat"
+                android:id="@+id/time_set"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="25dp"
-                android:background="@drawable/bg_button_primary"
-                android:text="Save"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white" />
+                android:layout_marginTop="20dp"
+                android:text="Set Time"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/save_taks"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:backgroundTint="@color/teal_200"
+                android:text="Save Taks"
+                android:textAllCaps="false" />
 
         </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </layout>

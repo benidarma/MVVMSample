@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/taskFragment"
-        android:name="com.mvvm.todo.ui.fragment.TaskFragment"
+        android:name="com.amel.mvvmsample.ui.fragment.TaskFragment"
         android:label="TaskFragment" >
         <action
             android:id="@+id/action_taskFragment_to_addCategoryFragment"
@@ -23,7 +23,7 @@
     </fragment>
     <fragment
         android:id="@+id/addFragment"
-        android:name="com.mvvm.todo.ui.fragment.add.AddFragment"
+        android:name="com.amel.mvvmsample.ui.fragment.add.AddTaksFragment"
         android:label="AddFragment" >
         <action
             android:id="@+id/action_addFragment_to_taksByCategoryFragment"
@@ -31,7 +31,7 @@
     </fragment>
     <fragment
         android:id="@+id/addCategoryFragment"
-        android:name="com.mvvm.todo.ui.fragment.add.AddCategoryFragment"
+        android:name="com.amel.mvvmsample.ui.fragment.add.AddCategoryFragment"
         android:label="AddCategoryFragment" >
         <action
             android:id="@+id/action_addCategoryFragment_to_taskFragment"
@@ -42,7 +42,7 @@
     </fragment>
     <fragment
         android:id="@+id/taksByCategoryFragment"
-        android:name="com.mvvm.todo.ui.fragment.TaksByCategoryFragment"
+        android:name="com.amel.mvvmsample.ui.fragment.TaksByCategoryFragment"
         android:label="TaksByCategoryFragment" >
         <action
             android:id="@+id/action_taksByCategoryFragment_to_addFragment"
