@@ -21,7 +21,7 @@ object ApplicationModule {
         app,
         MyTaskDatabase::class.java,
         "MyTask"
-    ).build()
+    ).allowMainThreadQueries().build()
 
     @Singleton
     @Provides

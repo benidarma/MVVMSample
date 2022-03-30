@@ -2,7 +2,6 @@ package com.amel.mvvmsample.adapter
 
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.ViewGroup

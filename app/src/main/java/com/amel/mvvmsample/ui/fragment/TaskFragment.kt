@@ -148,9 +148,6 @@ class TaskFragment : Fragment(R.layout.fragment_task) {
             builder.setNegativeButton("Delete") { dialog, _ ->
                 dialog.dismiss()
                 categoryViewModel.callDelete(categoryData)
-
-                TODO() // masih error jika category di delete
-                viewModel.deleteByCatId(categoryData.category_id)
             }
             builder.setNeutralButton("Cancel") { dialog, _ ->
                 dialog.dismiss()

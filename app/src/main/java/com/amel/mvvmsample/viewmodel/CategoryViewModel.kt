@@ -1,5 +1,6 @@
 package com.amel.mvvmsample.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.*
 import com.amel.mvvmsample.model.CategoryData
 import com.amel.mvvmsample.model.CategoryTask
@@ -9,7 +10,6 @@ import com.amel.mvvmsample.ui.fragment.add.Cons.INSERT
 import com.amel.mvvmsample.util.Constant.myGlobalVarIdCat
 import com.amel.mvvmsample.util.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -68,6 +68,9 @@ class CategoryViewModel @Inject constructor(
         val noOfRowsDeleted = categoryRepo.delete(CategoryTask(category.category_id, category.category_name))
         if (noOfRowsDeleted > 0) {
             statusMessage.value = Event("$noOfRowsDeleted Row Deleted Successfully")
+            viewModelScope.launch {
+                taksRepo.deleteByCatId(category.category_id)
+            }
         } else {
             statusMessage.value = Event("Error Occurred")
         }
@@ -77,10 +80,13 @@ class CategoryViewModel @Inject constructor(
         categoryData.value?.clear()
         var i = 1
         categoryTask.forEach {
-            viewModelScope.launch(Dispatchers.IO) {
+            viewModelScope.launch {
                 val use = taksRepo.getTotalUseCategory(it.id)
 
+                Log.d("aaaaaaaaaaaaaa", use.toString())
+
                 categoryData.value?.add(CategoryData(it.id, it.name, use))
+                Log.d("aaaaaaaaaaaaaa", categoryData.toString())
                 if (categoryTask.size == i) {
                     categoryData.postValue(categoryData.value)
                     i = 1

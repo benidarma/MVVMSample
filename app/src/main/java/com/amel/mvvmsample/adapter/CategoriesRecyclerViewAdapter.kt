@@ -36,13 +36,8 @@ class CategoriesRecyclerViewAdapter(
     @SuppressLint("NotifyDataSetChanged")
     fun setList(categoryData: List<CategoryData>) {
         categoriesList.clear()
-        if (categoryData.size == 1) {
-            categoriesList.addAll(categoryData)
-            notifyDataSetChanged()
-            return
-        }
-        val list = categoryData.sortedByDescending {
-            it.category_id
+        val list = categoryData.sortedBy {
+            it.category_name
         }
         categoriesList.addAll(list)
         notifyDataSetChanged()
